@@ -7,17 +7,14 @@ require('dotenv').config();
 const app = express();
 const PORT = 3000;
 
-// CORS configuration for development and production
-const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com'] // Replace with your actual domain
-    : ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:3000', 'file://'], // Development origins including HTML file
+// CORS configuration - Allow all origins
+app.use(cors({
+  origin: true, // Allow all origins
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
   credentials: true
-};
+}));
 
-app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
