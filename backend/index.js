@@ -5,7 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // CORS configuration - Allow all origins
 app.use(cors({
@@ -18,8 +18,23 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/contact', async (req, res) => {
+// Health check route
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'Contact API is running!', status: 'healthy' });
+});
+
+app.post('/', async (req, res) => {
+  console.log('Received contact form submission:', req.body);
+  
   const { name, email, message } = req.body;
+
+  // Validate required fields
+  if (!name || !email || !message) {
+    console.log('Missing required fields');
+    return res.status(400).json({ 
+      message: 'Missing required fields: name, email, and message are required' 
+    });
+  }
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
